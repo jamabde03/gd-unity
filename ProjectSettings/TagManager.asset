@@ -3,7 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - yellowOrb
+  - blueOrb
+  - cubePortal
+  - gravityPortal
+  - shipPortal
+  - ballPortal
+  - ground
+  - spike
+  - wavePortal
   layers:
   - Default
   - TransparentFX

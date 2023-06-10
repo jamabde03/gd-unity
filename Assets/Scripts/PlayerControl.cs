@@ -23,7 +23,6 @@ public class PlayerControl : MonoBehaviour
     {
         rb.velocity = new Vector2(speed, rb.velocity.y);
         movePlayer();
-        
     }
 
     void Jump()
