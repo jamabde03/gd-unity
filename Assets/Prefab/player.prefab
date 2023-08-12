@@ -155,3 +155,4 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   PlayerDual: {fileID: 0}
   createPrefab: 0
+  isDualCopy: 0

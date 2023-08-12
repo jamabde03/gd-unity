@@ -15,6 +15,7 @@ public class PlayerControl : MonoBehaviour
     public AudioSource audioSource;
     public GameObject PlayerDual;
     public bool createPrefab = true;
+    public bool isDualCopy = false;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -80,12 +81,13 @@ public class PlayerControl : MonoBehaviour
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("ground"))
+        
+        if (collision.gameObject.CompareTag("ground"))
         {
             if (transform.position.x + 0.49f < collision.gameObject.transform.position.x - collision.gameObject.transform.localScale.x/2)
             {
+                RespawnPlayer();
                 deaths++;
-                transform.position = startPos;
                 currentGM = gameMode.Cube;
                 rb.gravityScale = 2;
                 isGrounded = true;
@@ -95,8 +97,8 @@ public class PlayerControl : MonoBehaviour
             isGrounded = true;
             if(currentGM == gameMode.Wave)
             {
+                RespawnPlayer();
                 deaths++;
-                transform.position = startPos;
                 currentGM = gameMode.Cube;
                 rb.gravityScale = 2;
                 speed = 6;
@@ -106,8 +108,8 @@ public class PlayerControl : MonoBehaviour
 
         if(collision.gameObject.CompareTag("spike"))
         {
+            RespawnPlayer();
             deaths++;
-            transform.position = startPos;
             currentGM = gameMode.Cube;
             rb.gravityScale = 2;
             speed = 6;
@@ -122,7 +124,7 @@ public class PlayerControl : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("grsound"))
+        if (collision.gameObject.CompareTag("ground"))
         {
             isGrounded = false;
         }
@@ -186,7 +188,10 @@ public class PlayerControl : MonoBehaviour
             if (createPrefab == true)
             {
                 GameObject clone = Instantiate(PlayerDual, transform.position, transform.rotation);
+                clone.name = "Clone";
+                clone.GetComponent<PlayerControl>().isDualCopy = true;
                 createPrefab = false;
+
             }
         }
     }
@@ -204,5 +209,35 @@ public class PlayerControl : MonoBehaviour
                 rb.gravityScale *= -1;
             }
         }
+    }
+
+    public void RespawnPlayer()
+    {
+        GameObject playerClone = GameObject.Find("Clone");
+        GameObject playerOG = GameObject.Find("Player");
+        playerOG.GetComponent<PlayerControl>().createPrefab = true;
+        playerOG.transform.position = startPos;
+        Destroy(playerClone);
+        
+
+        /*GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        if (!isDualCopy)
+        {
+            foreach (GameObject player in players)
+            {
+                if (!player.GetComponent<PlayerControl>().isDualCopy)
+                {
+                    player.transform.position = startPos;
+                    createPrefab = true;
+                }
+                else
+                {
+                    Destroy(gameObject);
+                }
+            }
+        }else
+        {
+            Destroy(gameObject);
+        }*/
     }
 }
