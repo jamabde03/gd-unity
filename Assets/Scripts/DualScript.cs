@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerControl : MonoBehaviour
+public class DualScript : MonoBehaviour
 {
     public Rigidbody2D rb;
     // Start is called before the first frame update
@@ -10,11 +10,10 @@ public class PlayerControl : MonoBehaviour
     public bool isGrounded;
     public float deaths;
     public Vector2 startPos;
-    public enum gameMode {Cube, Ship, Wave, UFO, Ball, Spider}
+    public enum gameMode { Cube, Ship, Wave, UFO, Ball, Spider }
     public gameMode currentGM;
     public AudioSource audioSource;
     public GameObject PlayerDual;
-    public bool createPrefab = true;
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -30,9 +29,9 @@ public class PlayerControl : MonoBehaviour
 
     void Jump()
     {
-        if(Input.GetMouseButton(0) && isGrounded)
+        if (Input.GetMouseButton(0) && isGrounded)
         {
-            rb.velocity = new Vector2(rb.velocity.x, (speed + 5) * rb.gravityScale/2);
+            rb.velocity = new Vector2(rb.velocity.x, (speed + 5) * rb.gravityScale / 2);
             isGrounded = false;
         }
     }
@@ -41,17 +40,17 @@ public class PlayerControl : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            rb.AddForce(new Vector2(0, 3 * (rb.gravityScale/2)));
+            rb.AddForce(new Vector2(0, 3 * (rb.gravityScale / 2)));
         }
     }
 
     void Wave()
     {
-        if(Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0))
         {
             rb.velocity = new Vector2(rb.velocity.x, speed);
         }
-        if(Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0))
         {
             rb.velocity = new Vector2(rb.velocity.x, -speed);
         }
@@ -70,9 +69,10 @@ public class PlayerControl : MonoBehaviour
         else if (currentGM == gameMode.Wave)
         {
             Wave();
-        }else if(currentGM == gameMode.Ball)
+        }
+        else if (currentGM == gameMode.Ball)
         {
-            if(Input.GetMouseButtonDown(0) && isGrounded)
+            if (Input.GetMouseButtonDown(0) && isGrounded)
             {
                 rb.gravityScale *= -1;
             }
@@ -80,9 +80,9 @@ public class PlayerControl : MonoBehaviour
     }
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("ground"))
+        if (collision.gameObject.CompareTag("ground"))
         {
-            if (transform.position.x + 0.49f < collision.gameObject.transform.position.x - collision.gameObject.transform.localScale.x/2)
+            if (transform.position.x + 0.49f < collision.gameObject.transform.position.x - collision.gameObject.transform.localScale.x / 2)
             {
                 deaths++;
                 transform.position = startPos;
@@ -93,7 +93,7 @@ public class PlayerControl : MonoBehaviour
                 audioSource.Play();
             }
             isGrounded = true;
-            if(currentGM == gameMode.Wave)
+            if (currentGM == gameMode.Wave)
             {
                 deaths++;
                 transform.position = startPos;
@@ -104,7 +104,7 @@ public class PlayerControl : MonoBehaviour
             }
         }
 
-        if(collision.gameObject.CompareTag("spike"))
+        if (collision.gameObject.CompareTag("spike"))
         {
             deaths++;
             transform.position = startPos;
@@ -113,16 +113,11 @@ public class PlayerControl : MonoBehaviour
             speed = 6;
             audioSource.Play();
         }
-
-        if(collision.gameObject.CompareTag("Player"))
-        {
-            Physics2D.IgnoreCollision(gameObject.GetComponent<BoxCollider2D>(), collision.gameObject.GetComponent<BoxCollider2D>());
-        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("grsound"))
+        if (collision.gameObject.CompareTag("ground"))
         {
             isGrounded = false;
         }
@@ -165,10 +160,10 @@ public class PlayerControl : MonoBehaviour
             rb.gravityScale = 2;
         }
 
-        if(collision.gameObject.CompareTag("SpeedPortalFast"))
+        if (collision.gameObject.CompareTag("SpeedPortalFast"))
         {
             speed = 9f;
-            
+
         }
 
         if (collision.gameObject.CompareTag("SpeedPortalNormal"))
@@ -183,11 +178,7 @@ public class PlayerControl : MonoBehaviour
 
         if (collision.gameObject.CompareTag("DualPortal"))
         {
-            if (createPrefab == true)
-            {
-                GameObject clone = Instantiate(PlayerDual, transform.position, transform.rotation);
-                createPrefab = false;
-            }
+            GameObject clone = Instantiate(PlayerDual, transform.position, transform.rotation);
         }
     }
 
