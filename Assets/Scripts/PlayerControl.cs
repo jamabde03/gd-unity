@@ -20,6 +20,7 @@ public class PlayerControl : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         currentGM = gameMode.Cube;
+        startPos = new Vector2(127, 0);
     }
 
     // Update is called once per frame
@@ -88,21 +89,17 @@ public class PlayerControl : MonoBehaviour
             {
                 RespawnPlayer();
                 deaths++;
-                currentGM = gameMode.Cube;
-                rb.gravityScale = 2;
-                isGrounded = true;
-                speed = 6;
-                audioSource.Play();
+            }
+            if (transform.position.y + 0.49f < collision.gameObject.transform.position.y - collision.gameObject.transform.localScale.y / 2 && rb.gravityScale/3 == 1)
+            {
+                RespawnPlayer();
+                deaths++;
             }
             isGrounded = true;
             if(currentGM == gameMode.Wave)
             {
                 RespawnPlayer();
                 deaths++;
-                currentGM = gameMode.Cube;
-                rb.gravityScale = 2;
-                speed = 6;
-                audioSource.Play();
             }
         }
 
@@ -110,10 +107,6 @@ public class PlayerControl : MonoBehaviour
         {
             RespawnPlayer();
             deaths++;
-            currentGM = gameMode.Cube;
-            rb.gravityScale = 2;
-            speed = 6;
-            audioSource.Play();
         }
 
         if(collision.gameObject.CompareTag("Player"))
@@ -137,7 +130,6 @@ public class PlayerControl : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("test");
         if (collision.gameObject.CompareTag("shipPortal"))
         {
             currentGM = gameMode.Ship;
@@ -190,6 +182,8 @@ public class PlayerControl : MonoBehaviour
                 GameObject clone = Instantiate(PlayerDual, transform.position, transform.rotation);
                 clone.name = "Clone";
                 clone.GetComponent<PlayerControl>().isDualCopy = true;
+                clone.GetComponent<PlayerControl>().currentGM = currentGM;
+                clone.GetComponent<PlayerControl>().speed = speed;
                 createPrefab = false;
 
             }
@@ -204,9 +198,11 @@ public class PlayerControl : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("blueOrb"))
         {
+            isGrounded = true;
             if (Input.GetMouseButtonDown(0))
             {
                 rb.gravityScale *= -1;
+                Debug.Log("Switched");
             }
         }
     }
@@ -217,6 +213,7 @@ public class PlayerControl : MonoBehaviour
         GameObject playerOG = GameObject.Find("Player");
         playerOG.GetComponent<PlayerControl>().createPrefab = true;
         playerOG.transform.position = startPos;
+        playerOG.GetComponent<PlayerControl>().ResetGame();
         Destroy(playerClone);
         
 
@@ -239,5 +236,14 @@ public class PlayerControl : MonoBehaviour
         {
             Destroy(gameObject);
         }*/
+    }
+
+    public void ResetGame()
+    {
+        currentGM = gameMode.Cube;
+        rb.gravityScale = 2;
+        isGrounded = true;
+        speed = 6;
+        audioSource.Play();
     }
 }
